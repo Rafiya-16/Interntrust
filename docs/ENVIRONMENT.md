@@ -41,3 +41,6 @@ Currently the frontend calls the backend directly at `http://localhost:5000/api`
 |---|---|---|
 | Backend (Express) | 5000 | http://localhost:5000 |
 | Frontend (Vite dev server) | 5173 | http://localhost:5173 |
+
+## Frontend Dependencies (notable additions)
+- jwt-decode — decodes JWT payload client-side to restore login state on page refresh
