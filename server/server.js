@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
+const postingsRoutes = require('./routes/postings');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/postings', postingsRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))

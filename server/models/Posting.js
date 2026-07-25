@@ -8,7 +8,7 @@ const postingSchema = new mongoose.Schema({
   stipend: { type: String },
   location: { type: String, required: true },
   applyLink: { type: String, required: true },
-  submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   legitimacyScore: { type: Number, default: null },
   legitimacyReason: { type: String, default: null },
   flaggedBy: { type: [mongoose.Schema.Types.ObjectId], ref: 'User', default: [] },
