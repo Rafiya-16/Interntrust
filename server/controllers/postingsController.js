@@ -1,4 +1,5 @@
 const Posting = require('../models/Posting');
+const { scorePostingLegitimacy } = require('../services/aiScoring');
 
 async function createPosting(req, res) {
   try {
@@ -16,6 +17,8 @@ async function createPosting(req, res) {
       return res.status(400).json({ error: 'Apply link must be a valid URL' });
     }
 
+    const { score, reason } = await scorePostingLegitimacy({ title, company, description, stipend, location });
+
     const posting = await Posting.create({
       title,
       company,
@@ -25,6 +28,8 @@ async function createPosting(req, res) {
       location,
       applyLink,
       submittedBy: req.userId,
+      legitimacyScore: score,
+      legitimacyReason: reason,
     });
 
     res.status(201).json({ posting });
