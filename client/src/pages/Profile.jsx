@@ -99,112 +99,105 @@ function Profile() {
   }
 
   if (loading) {
-    return <div style={{ padding: '2rem' }}>Loading your profile...</div>;
+    return (
+      <div className="center-state">
+        <span className="spinner" />
+        <p>Loading your profile...</p>
+      </div>
+    );
   }
 
   return (
-    <div style={{ maxWidth: '500px', margin: '2rem auto', padding: '1rem' }}>
-      <h1>Your Profile</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Name</label><br />
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
+    <div className="page-container" style={{ maxWidth: '520px' }}>
+      <h1 style={{ fontSize: '1.7rem' }}>Your Profile</h1>
+      <div className="card">
+        <form onSubmit={handleSubmit}>
+          <div className="field-group">
+            <label className="field-label">Name</label>
+            <input type="text" className="field-input" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Skills</label><br />
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <div className="field-group">
+            <label className="field-label">Skills</label>
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.6rem' }}>
+              <input
+                type="text"
+                className="field-input"
+                value={skillsInput}
+                onChange={(e) => setSkillsInput(e.target.value)}
+                onKeyDown={handleSkillKeyDown}
+                placeholder="Type a skill and press Enter"
+                style={{ flex: 1 }}
+              />
+              <button type="button" onClick={addSkill} className="btn-secondary">Add</button>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {skills.map((skill) => (
+                <span key={skill} className="tag-chip">
+                  {skill}
+                  <button type="button" onClick={() => removeSkill(skill)} aria-label={`Remove ${skill}`}>×</button>
+                </span>
+              ))}
+              {skills.length === 0 && (
+                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>No skills added yet</span>
+              )}
+            </div>
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Experience Level</label>
+            <div style={{ display: 'flex', gap: '1.25rem' }}>
+              {ALL_EXPERIENCE.map((opt) => (
+                <label key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem' }}>
+                  <input
+                    type="radio"
+                    name="experienceLevel"
+                    value={opt.value}
+                    checked={experienceLevel === opt.value}
+                    onChange={(e) => setExperienceLevel(e.target.value)}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Location Preference</label>
+            <div style={{ display: 'flex', gap: '1.25rem' }}>
+              {ALL_LOCATION.map((opt) => (
+                <label key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem' }}>
+                  <input
+                    type="radio"
+                    name="locationPref"
+                    value={opt.value}
+                    checked={locationPref === opt.value}
+                    onChange={(e) => setLocationPref(e.target.value)}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Domain Interest</label>
             <input
               type="text"
-              value={skillsInput}
-              onChange={(e) => setSkillsInput(e.target.value)}
-              onKeyDown={handleSkillKeyDown}
-              placeholder="Type a skill and press Enter"
-              style={{ flex: 1, padding: '0.5rem' }}
+              className="field-input"
+              value={domainInterest}
+              onChange={(e) => setDomainInterest(e.target.value)}
             />
-            <button type="button" onClick={addSkill} style={{ padding: '0.5rem 1rem' }}>
-              Add
-            </button>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {skills.map((skill) => (
-              <span
-                key={skill}
-                style={{
-                  background: '#e0e0e0',
-                  color: '#111',
-                  padding: '0.25rem 0.6rem',
-                  borderRadius: '999px',
-                  fontSize: '0.85rem',
-                }}
-              >
-                {skill}{' '}
-                <button
-                  type="button"
-                  onClick={() => removeSkill(skill)}
-                  style={{ border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold' }}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Experience Level</label><br />
-          {ALL_EXPERIENCE.map((opt) => (
-            <label key={opt.value} style={{ marginRight: '1rem' }}>
-              <input
-                type="radio"
-                name="experienceLevel"
-                value={opt.value}
-                checked={experienceLevel === opt.value}
-                onChange={(e) => setExperienceLevel(e.target.value)}
-              />{' '}
-              {opt.label}
-            </label>
-          ))}
-        </div>
+          {error && <p className="error-text">{error}</p>}
+          {successMsg && <p className="success-text">{successMsg}</p>}
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Location Preference</label><br />
-          {ALL_LOCATION.map((opt) => (
-            <label key={opt.value} style={{ marginRight: '1rem' }}>
-              <input
-                type="radio"
-                name="locationPref"
-                value={opt.value}
-                checked={locationPref === opt.value}
-                onChange={(e) => setLocationPref(e.target.value)}
-              />{' '}
-              {opt.label}
-            </label>
-          ))}
-        </div>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Domain Interest</label><br />
-          <input
-            type="text"
-            value={domainInterest}
-            onChange={(e) => setDomainInterest(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
-
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {successMsg && <p style={{ color: 'green' }}>{successMsg}</p>}
-
-        <button type="submit" disabled={saving} style={{ padding: '0.5rem 1rem' }}>
-          {saving ? 'Saving...' : 'Save Profile'}
-        </button>
-      </form>
+          <button type="submit" disabled={saving} className="btn-primary">
+            {saving ? <span className="spinner" /> : 'Save Profile'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

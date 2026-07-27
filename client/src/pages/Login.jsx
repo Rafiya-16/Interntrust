@@ -27,35 +27,39 @@ function Login() {
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '3rem auto', padding: '1rem' }}>
-      <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Email</label><br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Password</label><br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading} style={{ padding: '0.5rem 1rem' }}>
-          {loading ? 'Logging in...' : 'Log In'}
-        </button>
-      </form>
-      <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+    <div className="page-container" style={{ maxWidth: '400px' }}>
+      <div className="card">
+        <h1 style={{ marginTop: 0, fontSize: '1.6rem' }}>Log In</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="field-group">
+            <label className="field-label">Email</label>
+            <input
+              type="email"
+              className="field-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="field-group">
+            <label className="field-label">Password</label>
+            <input
+              type="password"
+              className="field-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p className="error-text">{error}</p>}
+          <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%' }}>
+            {loading ? <span className="spinner" /> : 'Log In'}
+          </button>
+        </form>
+        <p style={{ marginBottom: 0, marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
+      </div>
     </div>
   );
 }

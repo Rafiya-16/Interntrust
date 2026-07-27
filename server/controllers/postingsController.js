@@ -1,5 +1,7 @@
 const Posting = require('../models/Posting');
+const Profile = require('../models/Profile');
 const { scorePostingLegitimacy } = require('../services/aiScoring');
+const { computeMatchScore } = require('../services/matching');
 
 async function createPosting(req, res) {
   try {
@@ -42,7 +44,16 @@ async function createPosting(req, res) {
 async function getAllPostings(req, res) {
   try {
     const postings = await Posting.find().sort({ createdAt: -1 });
-    res.status(200).json({ postings });
+    const profile = await Profile.findOne({ userId: req.userId });
+
+    const rankedPostings = postings
+      .map((posting) => {
+        const { matchScore, matchReasons } = computeMatchScore(profile, posting);
+        return { ...posting.toObject(), matchScore, matchReasons };
+      })
+      .sort((a, b) => b.matchScore - a.matchScore);
+
+    res.status(200).json({ postings: rankedPostings });
   } catch (err) {
     console.error('Get postings error:', err.message);
     res.status(500).json({ error: 'Something went wrong fetching postings' });

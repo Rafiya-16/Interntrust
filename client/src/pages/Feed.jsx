@@ -21,16 +21,26 @@ function Feed() {
     loadPostings();
   }, []);
 
-  if (loading) {
-    return <div style={{ padding: '2rem' }}>Loading postings...</div>;
-  }
-
   return (
-    <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '1rem' }}>
-      <h1>Internship Feed</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {!error && postings.length === 0 && <p>No postings yet.</p>}
-      {postings.map((posting) => (
+    <div className="page-container" style={{ maxWidth: '700px' }}>
+      <h1 style={{ fontSize: '1.7rem' }}>Internship Feed</h1>
+
+      {loading && (
+        <div className="center-state">
+          <span className="spinner" />
+          <p>Loading postings...</p>
+        </div>
+      )}
+
+      {!loading && error && <p className="error-text">{error}</p>}
+
+      {!loading && !error && postings.length === 0 && (
+        <div className="center-state">
+          <p>No postings yet — be the first to submit one!</p>
+        </div>
+      )}
+
+      {!loading && !error && postings.map((posting) => (
         <PostingCard key={posting._id} posting={posting} />
       ))}
     </div>

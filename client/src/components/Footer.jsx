@@ -3,11 +3,11 @@ function Footer() {
     <footer
       style={{
         textAlign: 'center',
-        padding: '1rem',
+        padding: '1.25rem',
         marginTop: '2rem',
-        borderTop: '1px solid #333',
+        borderTop: '1px solid var(--color-border)',
         fontSize: '0.8rem',
-        color: '#888',
+        color: 'var(--color-text-muted)',
       }}
     >
       Built with Claude as part of the AB Talks 60-Day Claude AI Challenge.
