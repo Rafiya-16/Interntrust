@@ -5,12 +5,23 @@ const { computeMatchScore } = require('../services/matching');
 
 async function createPosting(req, res) {
   try {
-    const { title, company, description, requiredSkills, stipend, location, applyLink } = req.body;
+    let { title, company, description, requiredSkills, stipend, location, applyLink } = req.body;
+
+    title = (title || '').trim();
+    company = (company || '').trim();
+    description = (description || '').trim();
+    stipend = (stipend || '').trim();
+    location = (location || '').trim();
+    applyLink = (applyLink || '').trim();
 
     if (!title || !company || !description || !location || !applyLink) {
       return res.status(400).json({ error: 'Title, company, description, location, and apply link are required' });
     }
     if (!Array.isArray(requiredSkills) || requiredSkills.length === 0) {
+      return res.status(400).json({ error: 'At least one required skill is needed' });
+    }
+    requiredSkills = requiredSkills.map((s) => String(s).trim()).filter(Boolean);
+    if (requiredSkills.length === 0) {
       return res.status(400).json({ error: 'At least one required skill is needed' });
     }
     try {
@@ -26,7 +37,7 @@ async function createPosting(req, res) {
       company,
       description,
       requiredSkills,
-      stipend: stipend || '',
+      stipend,
       location,
       applyLink,
       submittedBy: req.userId,
@@ -68,6 +79,9 @@ async function getPostingById(req, res) {
     }
     res.status(200).json({ posting });
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(404).json({ error: 'Posting not found' });
+    }
     console.error('Get posting error:', err.message);
     res.status(500).json({ error: 'Something went wrong fetching the posting' });
   }

@@ -18,7 +18,9 @@ function SubmitPosting() {
 
   function addSkill() {
     const trimmed = skillsInput.trim();
-    if (trimmed && !requiredSkills.includes(trimmed)) {
+    if (!trimmed) return;
+    const alreadyExists = requiredSkills.some((s) => s.toLowerCase() === trimmed.toLowerCase());
+    if (!alreadyExists) {
       setRequiredSkills([...requiredSkills, trimmed]);
     }
     setSkillsInput('');
@@ -39,7 +41,7 @@ function SubmitPosting() {
     e.preventDefault();
     setError('');
 
-    if (!title || !company || !description || !location || !applyLink) {
+    if (!title.trim() || !company.trim() || !description.trim() || !location.trim() || !applyLink.trim()) {
       setError('Please fill in all required fields.');
       return;
     }
@@ -57,13 +59,13 @@ function SubmitPosting() {
     setSaving(true);
     try {
       await api.post('/postings', {
-        title,
-        company,
-        description,
+        title: title.trim(),
+        company: company.trim(),
+        description: description.trim(),
         requiredSkills,
-        stipend,
-        location,
-        applyLink,
+        stipend: stipend.trim(),
+        location: location.trim(),
+        applyLink: applyLink.trim(),
       });
       navigate('/feed');
     } catch (err) {
@@ -79,21 +81,22 @@ function SubmitPosting() {
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="field-group">
-            <label className="field-label">Title</label>
-            <input type="text" className="field-input" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <label className="field-label" htmlFor="posting-title">Title</label>
+            <input id="posting-title" type="text" className="field-input" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
           <div className="field-group">
-            <label className="field-label">Company</label>
-            <input type="text" className="field-input" value={company} onChange={(e) => setCompany(e.target.value)} />
+            <label className="field-label" htmlFor="posting-company">Company</label>
+            <input id="posting-company" type="text" className="field-input" value={company} onChange={(e) => setCompany(e.target.value)} />
           </div>
           <div className="field-group">
-            <label className="field-label">Description</label>
-            <textarea className="field-input" value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
+            <label className="field-label" htmlFor="posting-description">Description</label>
+            <textarea id="posting-description" className="field-input" value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
           </div>
           <div className="field-group">
-            <label className="field-label">Required Skills</label>
+            <label className="field-label" htmlFor="posting-skill-input">Required Skills</label>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.6rem' }}>
               <input
+                id="posting-skill-input"
                 type="text"
                 className="field-input"
                 value={skillsInput}
@@ -114,18 +117,18 @@ function SubmitPosting() {
             </div>
           </div>
           <div className="field-group">
-            <label className="field-label">Stipend (optional)</label>
-            <input type="text" className="field-input" value={stipend} onChange={(e) => setStipend(e.target.value)} />
+            <label className="field-label" htmlFor="posting-stipend">Stipend (optional)</label>
+            <input id="posting-stipend" type="text" className="field-input" value={stipend} onChange={(e) => setStipend(e.target.value)} />
           </div>
           <div className="field-group">
-            <label className="field-label">Location</label>
-            <input type="text" className="field-input" value={location} onChange={(e) => setLocation(e.target.value)} />
+            <label className="field-label" htmlFor="posting-location">Location</label>
+            <input id="posting-location" type="text" className="field-input" value={location} onChange={(e) => setLocation(e.target.value)} />
           </div>
           <div className="field-group">
-            <label className="field-label">Apply Link</label>
-            <input type="text" className="field-input" value={applyLink} onChange={(e) => setApplyLink(e.target.value)} placeholder="https://..." />
+            <label className="field-label" htmlFor="posting-applylink">Apply Link</label>
+            <input id="posting-applylink" type="text" className="field-input" value={applyLink} onChange={(e) => setApplyLink(e.target.value)} placeholder="https://..." />
           </div>
-          {error && <p className="error-text">{error}</p>}
+          {error && <p className="error-text" role="alert">{error}</p>}
           <button type="submit" disabled={saving} className="btn-primary">
             {saving ? <span className="spinner" /> : 'Submit Posting'}
           </button>

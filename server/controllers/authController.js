@@ -4,11 +4,12 @@ const User = require('../models/User');
 
 async function signup(req, res) {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
+    email = email.trim().toLowerCase();
     if (password.length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
@@ -19,7 +20,16 @@ async function signup(req, res) {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, passwordHash });
+
+    let user;
+    try {
+      user = await User.create({ email, passwordHash });
+    } catch (err) {
+      if (err.code === 11000) {
+        return res.status(409).json({ error: 'Email already registered' });
+      }
+      throw err;
+    }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
@@ -32,11 +42,12 @@ async function signup(req, res) {
 
 async function login(req, res) {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
+    email = email.trim().toLowerCase();
 
     const user = await User.findOne({ email });
     if (!user) {

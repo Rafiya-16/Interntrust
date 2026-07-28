@@ -37,7 +37,7 @@ function Profile() {
           setDomainInterest(profile.domainInterest || 'CS/General');
         }
       } catch (err) {
-        setError('Could not load your profile. Try refreshing the page.');
+        setError(err.response?.data?.error || 'Could not load your profile. Try refreshing the page.');
       } finally {
         setLoading(false);
       }
@@ -47,7 +47,9 @@ function Profile() {
 
   function addSkill() {
     const trimmed = skillsInput.trim();
-    if (trimmed && !skills.includes(trimmed)) {
+    if (!trimmed) return;
+    const alreadyExists = skills.some((s) => s.toLowerCase() === trimmed.toLowerCase());
+    if (!alreadyExists) {
       setSkills([...skills, trimmed]);
     }
     setSkillsInput('');
@@ -113,14 +115,15 @@ function Profile() {
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="field-group">
-            <label className="field-label">Name</label>
-            <input type="text" className="field-input" value={name} onChange={(e) => setName(e.target.value)} />
+            <label className="field-label" htmlFor="profile-name">Name</label>
+            <input id="profile-name" type="text" className="field-input" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
           <div className="field-group">
-            <label className="field-label">Skills</label>
+            <label className="field-label" htmlFor="profile-skill-input">Skills</label>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.6rem' }}>
               <input
+                id="profile-skill-input"
                 type="text"
                 className="field-input"
                 value={skillsInput}
@@ -181,8 +184,9 @@ function Profile() {
           </div>
 
           <div className="field-group">
-            <label className="field-label">Domain Interest</label>
+            <label className="field-label" htmlFor="profile-domain">Domain Interest</label>
             <input
+              id="profile-domain"
               type="text"
               className="field-input"
               value={domainInterest}
@@ -190,8 +194,8 @@ function Profile() {
             />
           </div>
 
-          {error && <p className="error-text">{error}</p>}
-          {successMsg && <p className="success-text">{successMsg}</p>}
+          {error && <p className="error-text" role="alert">{error}</p>}
+          {successMsg && <p className="success-text" role="status">{successMsg}</p>}
 
           <button type="submit" disabled={saving} className="btn-primary">
             {saving ? <span className="spinner" /> : 'Save Profile'}
