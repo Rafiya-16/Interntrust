@@ -87,4 +87,29 @@ async function getPostingById(req, res) {
   }
 }
 
-module.exports = { createPosting, getAllPostings, getPostingById };
+async function flagPosting(req, res) {
+  try {
+    const posting = await Posting.findById(req.params.id);
+    if (!posting) {
+      return res.status(404).json({ error: 'Posting not found' });
+    }
+
+    const alreadyFlagged = posting.flaggedBy.some((id) => id.toString() === req.userId);
+    if (alreadyFlagged) {
+      return res.status(409).json({ error: 'You have already flagged this posting' });
+    }
+
+    posting.flaggedBy.push(req.userId);
+    await posting.save();
+
+    res.status(200).json({ posting });
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(404).json({ error: 'Posting not found' });
+    }
+    console.error('Flag posting error:', err.message);
+    res.status(500).json({ error: 'Something went wrong flagging the posting' });
+  }
+}
+
+module.exports = { createPosting, getAllPostings, getPostingById, flagPosting };

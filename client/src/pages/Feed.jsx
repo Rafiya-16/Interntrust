@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import PostingCard from '../components/PostingCard';
+import { useAuth } from '../context/AuthContext';
 
 function Feed() {
   const [postings, setPostings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [hasProfile, setHasProfile] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     async function loadData() {
@@ -69,7 +71,7 @@ function Feed() {
       )}
 
       {!loading && !error && postings.map((posting) => (
-        <PostingCard key={posting._id} posting={posting} />
+        <PostingCard key={posting._id} posting={posting} currentUserId={user?.id} />
       ))}
     </div>
   );
